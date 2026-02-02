@@ -1,1 +1,32 @@
-name: GitHub Pages\n\on:\n  push:\n    branches:\n      - main # or master\n\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    concurrency:\n      group: ${{ github.workflow }}-${{ github.ref }}\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          submodules: true  # Fetch Hugo themes\n          fetch-depth: 0  # Fetch all history for .GitInfo and .Lastmod\n      - name: Setup Hugo\n        uses: peaceiris/actions-hugo@v3\n        with:\n          hugo-version: \'latest\'\n          extended: true\n      - name: Build\n        run: hugo --minify\n      - name: Deploy\n        uses: peaceiris/actions-gh-pages@v4\n        with:\n          github_token: ${{ secrets.GITHUB_TOKEN }}\n          publish_dir: ./public\n
+name: GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      - name: Build
+        run: hugo --minify
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
